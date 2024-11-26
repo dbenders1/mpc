@@ -1,0 +1,17 @@
+# Python
+**/__pycache__
+**/venv
+
+# mpc_tools
+mpc_tools/profiling/*
+!mpc_tools/profiling/*.md
+!mpc_tools/profiling/*.sh
+mpc_tools/recorded_data/*
+!mpc_tools/recorded_data/*.md
+
+# mpc_solver
+mpc_solver/include/mpc_solver/*
+!mpc_solver/include/mpc_solver/core
+
+mpc_solver/src/*
+!mpc_solver/src/core

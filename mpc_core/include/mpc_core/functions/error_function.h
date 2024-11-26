@@ -1,0 +1,6 @@
+#ifndef MPC_CORE_FUNCTIONS_ERROR_FUNCTION_H
+#define MPC_CORE_FUNCTIONS_ERROR_FUNCTION_H
+
+void errorPrintingSolver(int exit_code);
+
+#endif // MPC_CORE_FUNCTIONS_ERROR_FUNCTION_H

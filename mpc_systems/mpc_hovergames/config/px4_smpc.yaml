@@ -1,0 +1,64 @@
+params:
+    control_loop_and_actuation:
+        sync_simple_sim: false
+    modules:
+        static_polyhedron_constraints:
+            safety_margins: [0.1]
+            # safety_margins: [0.2]  # without steady-state terminal constraint in lab
+    visualization:
+        system_interface:
+            draw_predicted_positions_ground_air: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
+            predicted_positions_marker_color: [1, 0.6484375, 0, 1] # orange: 166/256
+            predicted_positions_marker_scale: [0.1, 0.1, 0.16]
+            draw_predicted_regions: false
+            # predicted regions have same color as predicted positions
+            predicted_regions_marker_scale: [0.01, 0.01, 0.0001] # x and y get overwritten by the robot region diameter, or x is used as line width
+            predicted_regions_marker_z: 0.003
+        modules:
+            static_polyhedron_constraints:
+                draw_constraints: true
+                marker_z: 0.004
+                indices_to_draw: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    recording:
+        system_interface:
+            record_predicted_positions: true
+            record_slack: true
+            record_time_reference: true
+        modules:
+            goal_oriented:
+                record_goal_position: true
+            reference_trajectory: # to avoid getting runtime warnings
+                record_reference_trajectory: false
+            static_polyhedron_constraints:
+                record_constraints: true
+
+topics:
+    publish:
+        system_interface:
+            control_command: "/mavros/setpoint_raw/attitude"
+    subscribe:
+        system_interface:
+            state: "/mavros/local_position/odom"
+    visualization:
+        system_interface:
+            predicted_positions: "/mpc/vis/predicted_positions"
+            predicted_regions: "/mpc/vis/predicted_regions"
+        modules:
+            goal_oriented:
+                goal_position: "/mpc/vis/goal_position"
+            reference_trajectory: # to avoid getting runtime warnings
+                reference_trajectory: ""
+            static_polyhedron_constraints:
+                constraints: "/mpc/vis/constraints"
+    recording:
+        system_interface:
+            predicted_trajectory: "/mpc/rec/predicted_trajectory"
+            slack: "/mpc/rec/slack"
+            time_reference: "/mpc/rec/time_reference"
+        modules:
+            goal_oriented:
+                goal_position: "/mpc/rec/goal_position"
+            reference_trajectory: # to avoid getting runtime warnings
+                reference_trajectory: ""
+            static_polyhedron_constraints:
+                constraints: "/mpc/rec/constraints"

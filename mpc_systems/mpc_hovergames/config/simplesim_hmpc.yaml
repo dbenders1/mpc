@@ -1,0 +1,89 @@
+params:
+    control_loop_and_actuation:
+        sync_simple_sim: true
+    modules:
+        static_polyhedron_constraints:
+            safety_margins: [0, 0]
+    visualization:
+        system_interface:
+            draw_predicted_positions_ground_air/0: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
+            draw_predicted_positions_ground_air/1: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
+            predicted_positions_marker_color/0: [1, 0.6484375, 0, 1] # orange: 166/256
+            predicted_positions_marker_color/1: [0, 0, 1, 1]
+            predicted_positions_marker_scale/0: [0.1, 0.1, 0.16]
+            predicted_positions_marker_scale/1: [0.2, 0.2, 0.08]
+            draw_predicted_regions/0: false
+            draw_predicted_regions/1: false
+            # predicted regions have same color as predicted positions
+            predicted_regions_marker_scale/0: [0.01, 0.01, 0.0001] # x and y get overwritten by the robot region diameter, or x is used as line width
+            predicted_regions_marker_scale/1: [0.01, 0.01, 0.0001] # x and y get overwritten by the robot region diameter, or x is used as line width
+            predicted_regions_marker_z/0: 0.003
+            predicted_regions_marker_z/1: 0.001
+        modules:
+            static_polyhedron_constraints:
+                draw_constraints/0: true
+                draw_constraints/1: true
+                marker_z/0: 0.004
+                marker_z/1: 0.002
+                indices_to_draw/0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                indices_to_draw/1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    recording:
+        system_interface:
+            record_predicted_positions/0: true
+            record_predicted_positions/1: true
+            record_slack/0: true
+            record_slack/1: true
+            record_time_reference/0: false
+            record_time_reference/1: false
+        modules:
+            goal_oriented:
+                record_goal_position/0: false
+                record_goal_position/1: true
+            reference_trajectory:
+                record_reference_trajectory/0: true
+                record_reference_trajectory/1: false
+            static_polyhedron_constraints:
+                record_constraints/0: true
+                record_constraints/1: true
+
+topics:
+    publish:
+        system_interface:
+            control_command: "/drone_hovergames/control"
+    subscribe:
+        system_interface:
+            state: "/drone_hovergames/state"
+    visualization:
+        system_interface:
+            predicted_positions/0: "/mpc/vis/predicted_positions/0"
+            predicted_positions/1: "/mpc/vis/predicted_positions/1"
+            predicted_regions/0: "/mpc/vis/predicted_regions/0"
+            predicted_regions/1: "/mpc/vis/predicted_regions/1"
+        modules:
+            goal_oriented:
+                goal_position/0: ""
+                goal_position/1: "/mpc/vis/goal_position/1"
+            reference_trajectory:
+                reference_trajectory/0: "/mpc/vis/reference_trajectory/0"
+                reference_trajectory/1: ""
+            static_polyhedron_constraints:
+                constraints/0: "/mpc/vis/constraints/0"
+                constraints/1: "/mpc/vis/constraints/1"
+    recording:
+        system_interface:
+            predicted_trajectory/0: "/mpc/rec/predicted_trajectory/0"
+            predicted_trajectory/1: "/mpc/rec/predicted_trajectory/1"
+            slack/0: "/mpc/rec/slack/0"
+            slack/1: "/mpc/rec/slack/1"
+            time_reference/0: ""
+            time_reference/1: ""
+        modules:
+            goal_oriented:
+                goal_position/0: ""
+                goal_position/1: "/mpc/rec/goal_position/1"
+            reference_trajectory:
+                reference_trajectory/0: "/mpc/rec/reference_trajectory/0"
+                reference_trajectory/1: ""
+            static_polyhedron_constraints:
+                constraints/0: "/mpc/rec/constraints/0"
+                constraints/1: "/mpc/rec/constraints/1"

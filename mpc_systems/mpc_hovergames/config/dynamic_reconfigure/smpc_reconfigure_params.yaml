@@ -1,0 +1,117 @@
+enable_debug_solver: false
+print_solver_info: true
+print_solver_output: true
+print_solver_parameters: true
+print_states: false
+
+# Simplesim dt=0.05, N=100  # previously used
+# input_delta_angles: 0.1
+# input_delta_psi: 0.1
+# input_thrust: 0.1
+# input_angles: 0.1
+# input_psi: 0.1
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 1
+# goal_z_all: 1
+# goal_yaw_all: 1
+# thrust: 1
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Simplesim dt=0.05, N=100
+# input_delta_angles: 0.2
+# input_delta_psi: 0.2
+# input_thrust: 0.2
+# input_angles: 0.2
+# input_psi: 0.2
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 2
+# goal_z_all: 2
+# goal_yaw_all: 2
+# thrust: 2
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Gazebo dt=0.05, N=28
+# input_delta_angles: 5
+# input_delta_psi: 5
+# input_thrust: 5
+# input_angles: 5
+# input_psi: 5
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 3.57
+# goal_z_all: 3.57
+# goal_yaw_all: 3.57
+# thrust: 3.57
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Simplesim/Gazebo/drone dt=0.05 N=8
+input_delta_angles: 8
+input_delta_psi: 8
+input_thrust: 8
+input_angles: 8
+input_psi: 8
+goal_xy: 100
+goal_z: 100
+goal_yaw: 100
+goal_xy_all: 10
+goal_z_all: 10
+goal_yaw_all: 10
+thrust: 10
+slack_linear: 0
+slack_quadratic: 1000
+
+# Drone dt=0.05 N=8 - no terminal steady state
+# input_delta_angles: 20
+# input_delta_psi: 20
+# input_thrust: 20
+# input_angles: 20
+# input_psi: 20
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 0.01
+# goal_z_all: 0.01
+# goal_yaw_all: 0.01
+# thrust: 20
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Gazebo p-SMPC
+# input_delta_angles: 1
+# input_delta_psi: 1
+# input_thrust: 1
+# input_angles: 1
+# input_psi: 1
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 1
+# goal_z_all: 1
+# goal_yaw_all: 1
+# thrust: 10
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Drone (old)
+# input_delta_angles: 20
+# input_delta_psi: 20
+# input_thrust: 10
+# input_angles: 10
+# input_psi: 10
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 0.1
+# goal_z_all: 0.1
+# goal_yaw_all: 0.1
+# thrust: 50
+# slack_linear: 0
+# slack_quadratic: 1000

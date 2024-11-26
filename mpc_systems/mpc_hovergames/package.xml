@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mpc_hovergames</name>
+  <version>0.0.1</version>
+  <description>The mpc_hovergames package</description>
+
+  <maintainer email="d.benders@tudelft.nl">Dennis Benders</maintainer>
+  <author>Dennis Benders</author>
+  <author>Thijs Niesten</author>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>eigen</depend>
+  <depend>mavros_msgs</depend>
+  <depend>mpc_msgs</depend>
+  <depend>mpc_tools</depend>
+  <depend>mpc_base</depend>
+  <depend>mpc_core</depend>
+  <depend>mpc_solver</depend>
+  <depend>mpc_modules</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>simple_sim</depend>
+  <exec_depend>drone_description</exec_depend>
+  <exec_depend>drone_gazebo</exec_depend>
+  <exec_depend>mavros</exec_depend>
+  <exec_depend>occupancygrid_creator</exec_depend>
+  <exec_depend>px4_tools</exec_depend>
+  <exec_depend>rosbag</exec_depend>
+  <exec_depend>rqt_reconfigure</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>rviz_tools</exec_depend>
+
+  <export>
+  </export>
+</package>

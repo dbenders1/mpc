@@ -1,0 +1,85 @@
+enable_debug_solver: false
+print_solver_info: true
+print_solver_output: true
+print_solver_parameters: true
+print_states: false
+
+# Simplesim/Gazebo/drone (N_total=5, N=4, beta=10)
+input_delta_angles: 8
+input_delta_psi: 8
+input_thrust: 8
+input_angles: 8
+input_psi: 8
+goal_xy: 100
+goal_z: 100
+goal_yaw: 100
+goal_xy_all: 20
+goal_z_all: 20
+goal_yaw_all: 20
+thrust: 20
+slack_linear: 0
+slack_quadratic: 1000
+
+# Simplesim (N_total=12, N=9, beta=4)
+# input_delta_angles: 3.56
+# input_delta_psi: 3.56
+# input_thrust: 3.56
+# input_angles: 3.56
+# input_psi: 3.56
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 8.89
+# goal_z_all: 8.89
+# goal_yaw_all: 8.89
+# thrust: 8.89
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Simplesim (N_total=7, N=5, beta=7)
+# input_delta_angles: 6.4
+# input_delta_psi: 6.4
+# input_thrust: 6.4
+# input_angles: 6.4
+# input_psi: 6.4
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 16
+# goal_z_all: 16
+# goal_yaw_all: 16
+# thrust: 16
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Simplesim (N_total=4, N=3, beta=13)
+# input_delta_angles: 10.67
+# input_delta_psi: 10.67
+# input_thrust: 10.67
+# input_angles: 10.67
+# input_psi: 10.67
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 26.67
+# goal_z_all: 26.67
+# goal_yaw_all: 26.67
+# thrust: 26.67
+# slack_linear: 0
+# slack_quadratic: 1000
+
+# Simplesim (N_total=4, N=3, beta=16)
+# input_delta_angles: 10.67
+# input_delta_psi: 10.67
+# input_thrust: 10.67
+# input_angles: 10.67
+# input_psi: 10.67
+# goal_xy: 100
+# goal_z: 100
+# goal_yaw: 100
+# goal_xy_all: 26.67
+# goal_z_all: 26.67
+# goal_yaw_all: 26.67
+# thrust: 26.67
+# slack_linear: 0
+# slack_quadratic: 1000

@@ -1,0 +1,3 @@
+[submodule "mpc_solver/scripts/include/offline_computations/mpc-sdp"]
+	path = mpc_solver/scripts/include/offline_computations/mpc-sdp
+	url = git@github.com:dbenders1/mpc-sdp.git

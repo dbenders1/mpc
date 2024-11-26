@@ -1,0 +1,90 @@
+params:
+    control_loop_and_actuation:
+        enable_output: true
+        auto_enable_plan: true
+        synchronized_actuation: true # actuate at start of control loop, instead of directly after optimization
+        feedback_law_frequency: 100
+        sync_mode: true
+    solver:
+        use_custom_initial_guess: false
+        time_shift: 1
+    robot:
+        n_dim: 3
+        length: 0.4 #NOTE: when using inflated obstacles using occupancygrid creator, we need to take half the diameter and radius
+        width: 0.4
+        com_to_back: 0.2 #NOTE: should be half of the length and width
+        base_link: base_link
+        target_frame: map
+    modules:
+        static_polyhedron_constraints:
+            n_constraints_per_stage: 24 # should match with the value given for the selected static constraints module in control_modules.py
+            occupied_threshold: 70
+            occ_cell_selection_method: 1
+            bounding_box_width: 1
+            line_segment_to_stage: 1 # -1: constraints based on line segment after stage; 0: constraints based on circle around stage; 1: constraints based on line segment before stage
+            delta_segment: 0.00001 # line segment length to mimic circular decomposition
+            safety_margins: [0, 0]
+    printing:
+        debug_output: false
+        debug_data: false
+    visualization:
+        general:
+            ground_projection_marker_alpha: 0.1
+            ground_projection_marker_z: 0.1
+        system_interface:
+            draw_current_position_ground_air: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
+            current_position_marker_color: [0.5, 0, 0.5, 1] # purple: 128/256
+            current_position_marker_scale: [0.05, 0.05, 0.2]
+            region_min_n_points: 30
+            current_region_n_points: 30 # 1 will draw a cylinder, >region_min_n_points will draw a line with n_points
+            predicted_regions_n_points: 30 # 1 will draw a cylinder, >region_min_n_points will draw a line with n_points
+            draw_current_region: true
+            # current region has same color as current position
+            current_region_marker_scale: [0.01, 0.01, 0.0001] # x and y get overwritten by the robot region diameter, or x is used as line width
+            current_region_marker_z: 0.005
+            region_indices_to_draw: [0]
+        modules:
+            goal_oriented:
+                draw_goal_position_ground_air: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
+                marker_color: [0, 1, 0, 1]
+                marker_scale: [0.25, 0.25, 0.04]
+            reference_trajectory:
+                draw_reference_trajectory_ground_air: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
+                marker_color: [1, 0, 0, 1]
+                marker_scale: [0.15, 0.15, 0.12]
+            static_polyhedron_constraints:
+                marker_alpha_hierarchical: 0.1
+                marker_scale: [0.1, 0.1, 0.001]
+                draw_vertices: true
+    recording:
+        enable_ros_recordings: false
+        enable_json_recordings: false
+        experiment_name_json: ""
+        system_interface:
+            record_current_state: true
+
+topics:
+    publish:
+        system_interface:
+            feedback_law: "/mpc/feedback_law"
+        modules:
+            static_polyhedron_constraints:
+                local_occupancy_grid: "/mpc/local_occupancy_grid"
+    subscribe:
+        modules:
+            goal_oriented:
+                goal: "/goal"
+            static_polyhedron_constraints:
+                occupancy_grid: "/occupancy_grid"
+    visualization:
+        system_interface:
+            current_position: "/mpc/vis/current_position"
+            current_region: "/mpc/vis/current_region"
+    recording:
+        system_interface:
+            current_state: "/mpc/rec/current_state"
+    hierarchical: # also include for SMPC to avoid getting runtime warnings
+        start_mpc_layer: "/start_mpc_layer"
+        reference: "/mpc/reference"
+        pmpc_objective_reached: "/mpc/pmpc_objective_reached"
+        pmpc_failure: "/mpc/pmpc_failure"

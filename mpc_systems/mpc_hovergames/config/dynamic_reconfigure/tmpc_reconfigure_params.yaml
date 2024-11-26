@@ -1,0 +1,22 @@
+enable_debug_solver: false
+print_solver_info: true 
+print_solver_output: true 
+print_solver_parameters: true
+
+# Simplesim/Gazebo/drone
+R_phi_c: 1000
+R_theta_c: 1000
+R_psi_c: 1000
+R_thrust_c: 50
+Q_x: 1000
+Q_y: 1000
+Q_z: 1000 #2000
+Q_vx: 10
+Q_vy: 10
+Q_vz: 10
+Q_phi: 50
+Q_theta: 50
+Q_psi: 50
+Q_thrust: 50
+slack_linear: 0
+slack_quadratic: 1000

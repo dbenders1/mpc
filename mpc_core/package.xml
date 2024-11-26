@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mpc_core</name>
+  <version>0.0.1</version>
+  <description>The mpc_core package</description>
+
+  <maintainer email="d.benders@tudelft.nl">Dennis Benders</maintainer>
+  <author>Dennis Benders</author>
+  <author>Thijs Niesten</author>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>mpc_base</depend>
+  <depend>mpc_msgs</depend>
+  <depend>mpc_tools</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+
+  <export>
+  </export>
+</package>

@@ -1,0 +1,391 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- Experiment settings -->
+    <arg name="sim" default="false"/>
+    <arg name="drone_name" default="hovergames"/>
+    <arg name="x_init" default="-3"/> <!-- or: -2.4 -->
+    <arg name="y_init" default="-0.5"/> <!-- or: -3 -->
+    <arg name="z_takeoff" default="1.4"/>
+
+    <!-- Gazebo settings -->
+    <arg name="gazebo_gui" default="false"/>
+    <!-- gazebo_x_init and gazebo_y_init are set via x_init and y_init -->
+    <arg name="gazebo_z_init" default="0"/>
+    <arg name="gazebo_R_init" default="0"/>
+    <arg name="gazebo_P_init" default="0"/>
+    <arg name="gazebo_Y_init" default="0"/>
+
+    <!-- PX4 control interface settings -->
+    <arg name="px4ci_run_px4_control_interface" default="true"/>
+    <arg name="px4ci_param_file" default="$(find px4_tools)/config/px4_control_interface_mpc.yaml"/>
+
+    <!-- MPC settings -->
+    <arg name="mpc_interface" default="px4"/> <!-- or: simplesim -->
+    <arg name="mpc_n_layers" default="2"/>
+    <arg name="mpc_layer_idx" default="-2"/>
+    <arg name="mpc_occupancy_grid_map_file" default="$(find occupancygrid_creator)/config/map_hovergames_hmpc.yaml"/> <!-- or: map_hovergames_hmpc_corridor.yaml -->
+    <arg name="smpc_reconfigure_callback_file" default="$(find mpc_hovergames)/config/dynamic_reconfigure/smpc_reconfigure_params.yaml"/>
+    <arg name="pmpc_reconfigure_callback_file" default="$(find mpc_hovergames)/config/dynamic_reconfigure/pmpc_reconfigure_params.yaml"/>
+    <arg name="tmpc_reconfigure_callback_file" default="$(find mpc_hovergames)/config/dynamic_reconfigure/tmpc_reconfigure_params.yaml"/>
+    <arg name="mpc_use_feedback_law" default="false"/>
+
+    <!-- Vicon settings -->
+    <arg name="vicon_publish_tf" default="true"/>
+    <arg name="vicon_reset_z_axis" default="true"/>
+    <arg name="vicon_only_use_object_specific" default="true"/>
+    <arg name="vicon_object_names" default="[drone1]"/>
+    <arg name="vicon_object_msg_types" default="[geometry_msgs/PoseStamped]"/>
+    <arg name="vicon_object_frame_ids" default="[map]"/>
+    <arg name="vicon_object_publish_topics" default="[/mavros/vision_pose/pose]"/>
+    <arg name="vicon_object_frequency_divider" default="[1]"/>
+
+    <!-- GCS settings -->
+    <arg name="gcs" default="false"/>
+
+    <!-- ROSbag record settings -->
+    <arg name="rosbag_record" default="false"/>
+
+    <!-- Load global parameters -->
+    <param name="sim" value="$(arg sim)"/>
+
+    <!-- Load common MPC parameters -->
+    <param name="n_layers" value="$(arg mpc_n_layers)"/>
+    <rosparam command="load" file="$(find mpc_hovergames)/config/common.yaml"/>
+
+    <!-- Launch all nodes for base environment, except for MPCs and feedback law controller -->
+    <group if="$(eval mpc_layer_idx == -1)">
+        <group unless="$(arg gcs)">
+            <!-- Load robot_description and publish the states on tf -->
+            <include file="$(find drone_description)/launch/drone_description.launch">
+                <arg name="drone_name" value="$(arg drone_name)"/>
+            </include>
+
+            <!-- Launch RViZ tools -->
+            <include file="$(find rviz_tools)/launch/rviz_tools.launch">
+                <arg name="pos_z" value="$(arg z_takeoff)"/>
+            </include>
+
+            <!-- Launch occupancy grid creator -->
+            <include file="$(find occupancygrid_creator)/launch/occupancygrid.launch">
+                <arg name="map_file" value="$(arg mpc_occupancy_grid_map_file)"/>
+            </include>
+
+            <!-- Launch simplesim and PX4-specific nodes -->
+            <group if="$(eval mpc_interface == 'simplesim')">
+                <group if="$(eval mpc_n_layers == 1)">
+                    <group if="$(arg rosbag_record)">
+                        <node name="record" pkg="rosbag" type="record" args="-o simplesim_smpc
+                            /drone_hovergames/control
+                            /drone_hovergames/state
+                            /goal
+                            /occupancy_grid
+                            /grid/obs/rec/rectangle2x1_0
+                            /grid/obs/rec/rectangle2x1_1
+                            /grid/obs/vis
+                            /mpc/local_occupancy_grid
+                            /mpc/rec/current_state
+                            /mpc/rec/goal_position
+                            /mpc/rec/constraints
+                            /mpc/rec/predicted_trajectory
+                            /mpc/rec/slack
+                            /mpc/vis/current_position
+                            /mpc/vis/current_position/ground
+                            /mpc/vis/current_region
+                            /mpc/vis/goal_position
+                            /mpc/vis/goal_position/ground
+                            /mpc/vis/constraints
+                            /mpc/vis/predicted_positions
+                            /mpc/vis/predicted_positions/ground
+                            /mpc/vis/predicted_regions
+                            /tf
+                            /mpc/computation_times"
+                        />
+                    </group>
+                </group>
+                <group if="$(eval mpc_n_layers == 2)">
+                    <group if="$(arg rosbag_record)">
+                        <node name="record" pkg="rosbag" type="record" args="-o simplesim_hmpc
+                            /drone_hovergames/control
+                            /drone_hovergames/state
+                            /goal
+                            /occupancy_grid
+                            /grid/obs/rec/rectangle2x1_0
+                            /grid/obs/rec/rectangle2x1_1
+                            /grid/obs/vis
+                            /mpc/local_occupancy_grid
+                            /mpc/rec/current_state
+                            /mpc/rec/reference_trajectory/0
+                            /mpc/rec/constraints/0
+                            /mpc/rec/predicted_trajectory/0
+                            /mpc/rec/slack/0
+                            /mpc/rec/goal_position/1
+                            /mpc/rec/constraints/1
+                            /mpc/rec/predicted_trajectory/1
+                            /mpc/rec/slack/1
+                            /mpc/vis/current_position
+                            /mpc/vis/current_position/ground
+                            /mpc/vis/current_region
+                            /mpc/vis/reference_trajectory/0
+                            /mpc/vis/reference_trajectory/ground/0
+                            /mpc/vis/constraints/0
+                            /mpc/vis/predicted_positions/0
+                            /mpc/vis/predicted_positions/ground/0
+                            /mpc/vis/predicted_regions/0
+                            /mpc/vis/goal_position/1
+                            /mpc/vis/goal_position/ground/1
+                            /mpc/vis/constraints/1
+                            /mpc/vis/predicted_positions/1
+                            /mpc/vis/predicted_positions/ground/1
+                            /mpc/vis/predicted_regions/1
+                            /start_mpc_layer
+                            /mpc/reference
+                            /tf
+                            /mpc/computation_times/0
+                            /mpc/computation_times/1"
+                        />
+                    </group>
+                </group>
+            </group>
+        </group>
+
+        <group if="$(eval mpc_interface == 'px4')">
+            <group unless="$(arg gcs)">
+                <include file="$(find px4_tools)/launch/px4_tools.launch">
+                    <arg name="sim" value="$(arg sim)"/>
+                    <arg name="drone_name" value="$(arg drone_name)"/>
+                    <arg name="run_px4_control_interface" value="$(arg px4ci_run_px4_control_interface)"/>
+                    <arg name="px4_control_interface_param_file" value="$(arg px4ci_param_file)"/>
+                    <arg name="gazebo_x_init" value="$(arg x_init)"/>
+                    <arg name="gazebo_y_init" value="$(arg y_init)"/>
+                    <arg name="gazebo_z_init" value="$(arg gazebo_z_init)"/>
+                    <arg name="gazebo_R_init" value="$(arg gazebo_R_init)"/>
+                    <arg name="gazebo_P_init" value="$(arg gazebo_P_init)"/>
+                    <arg name="gazebo_Y_init" value="$(arg gazebo_Y_init)"/>
+                </include>
+            </group>
+
+            <!-- Recording ROS bags should be part of launch on GCS when running lab experiments -->
+            <group if="$(eval mpc_n_layers == 1)">
+                <group if="$(arg rosbag_record)">
+                    <node name="record" pkg="rosbag" type="record" args="-o px4_smpc
+                        /mavros/battery
+                        /mavros/hover_thrust_estimate
+                        /mavros/local_position/odom
+                        /mavros/setpoint_raw/attitude
+                        /mavros/setpoint_raw/target_attitude
+                        /mavros/setpoint_raw/local
+                        /mavros/vision_pose/pose
+                        /mavros/time_reference
+                        /mavros/timesync_status
+                        /goal
+                        /occupancy_grid
+                        /grid/obs/rec/rectangle2x1_0
+                        /grid/obs/rec/rectangle2x1_1
+                        /grid/obs/vis
+                        /mpc/local_occupancy_grid
+                        /mpc/rec/time_reference
+                        /mpc/rec/current_state
+                        /mpc/rec/goal_position
+                        /mpc/rec/constraints
+                        /mpc/rec/predicted_trajectory
+                        /mpc/rec/slack
+                        /mpc/vis/current_position
+                        /mpc/vis/current_position/ground
+                        /mpc/vis/current_region
+                        /mpc/vis/goal_position
+                        /mpc/vis/goal_position/ground
+                        /mpc/vis/constraints
+                        /mpc/vis/predicted_positions
+                        /mpc/vis/predicted_positions/ground
+                        /mpc/vis/predicted_regions
+                        /tf
+                        /mavros/imu/data
+                        /solver_info/acceleration_setpoint
+                        /solver_info/position_guess
+                        /mpc/computation_times
+                        /mavros/local_position/odom
+                        /mavros/local_position/pose
+                        /mavros/local_position/velocity_body
+                        /mavros/local_position/velocity_local"
+                    />
+                </group>
+            </group>
+            <group if="$(eval mpc_n_layers == 2)">
+                <group if="$(arg rosbag_record)">
+                    <node name="record" pkg="rosbag" type="record" args="-o px4_hmpc
+                        /mavros/battery
+                        /mavros/hover_thrust_estimate
+                        /mavros/local_position/odom
+                        /mavros/setpoint_raw/attitude
+                        /mavros/setpoint_raw/target_attitude
+                        /mavros/setpoint_raw/local
+                        /mavros/vision_pose/pose
+                        /mavros/time_reference
+                        /mavros/timesync_status
+                        /goal
+                        /occupancy_grid
+                        /grid/obs/rec/rectangle2x1_0
+                        /grid/obs/rec/rectangle2x1_1
+                        /grid/obs/rec/rectangle3x1_0
+                        /grid/obs/rec/rectangle3x1_1
+                        /grid/obs/rec/rectangle3x1_2
+                        /grid/obs/rec/rectangle3x1_3
+                        /grid/obs/rec/rectangle3x1_4
+                        /grid/obs/rec/rectangle3x1_5
+                        /grid/obs/rec/rectangle3x1_6
+                        /grid/obs/rec/rectangle3x1_7
+                        /grid/obs/rec/rectangle3x1_8
+                        /grid/obs/rec/rectangle3x1_9
+                        /grid/obs/vis
+                        /mpc/local_occupancy_grid
+                        /mpc/rec/time_reference
+                        /mpc/rec/current_state
+                        /mpc/rec/reference_trajectory/0
+                        /mpc/rec/constraints/0
+                        /mpc/rec/predicted_trajectory/0
+                        /mpc/rec/slack/0
+                        /mpc/rec/goal_position/1
+                        /mpc/rec/constraints/1
+                        /mpc/rec/predicted_trajectory/1
+                        /mpc/rec/slack/1
+                        /mpc/vis/current_position
+                        /mpc/vis/current_position/ground
+                        /mpc/vis/current_region
+                        /mpc/vis/reference_trajectory/0
+                        /mpc/vis/reference_trajectory/ground/0
+                        /mpc/vis/constraints/0
+                        /mpc/vis/predicted_positions/0
+                        /mpc/vis/predicted_positions/ground/0
+                        /mpc/vis/predicted_regions/0
+                        /mpc/vis/goal_position/1
+                        /mpc/vis/goal_position/ground/1
+                        /mpc/vis/constraints/1
+                        /mpc/vis/predicted_positions/1
+                        /mpc/vis/predicted_positions/ground/1
+                        /mpc/vis/predicted_regions/1
+                        /start_mpc_layer
+                        /mpc/reference
+                        /tf
+                        /mavros/imu/data
+                        /solver_info/acceleration_setpoint
+                        /solver_info/position_guess
+                        /mpc/computation_times/0
+                        /mpc/computation_times/1
+                        /mavros/local_position/odom
+                        /mavros/local_position/pose
+                        /mavros/local_position/velocity_body
+                        /mavros/local_position/velocity_local"
+                    />
+                </group>
+            </group>
+        </group>
+
+        <!-- Launch simulation-specific nodes: Gazebo (PX4 interface) -->
+        <group if="$(eval sim and mpc_interface == 'px4' and not gcs)">
+            <include file="$(find drone_gazebo)/launch/gazebo_world.launch">
+                <arg name="gui" value="$(arg gazebo_gui)"/>
+            </include>
+        </group>
+
+        <!-- Launch ROS dynamic reconfigure and pre-configured RViZ GUIs only in simulation and on GCS -->
+        <group if="$(eval sim or gcs)">
+            <node name="rqt_reconfig" pkg="rqt_reconfigure" type="rqt_reconfigure"/>
+
+            <group if="$(eval mpc_n_layers == 1)">
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mpc_hovergames)/rviz/smpc.rviz"/>
+            </group>
+            <group if="$(eval mpc_n_layers == 2)">
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mpc_hovergames)/rviz/hmpc.rviz"/>
+            </group>
+        </group>
+
+        <!-- Launch experiment-specific nodes: vicon bridge -->
+        <group unless="$(eval sim or gcs)">
+            <include file="$(find vicon_bridge)/launch/vicon.launch">
+                <arg name="publish_tf" value="$(arg vicon_publish_tf)"/>
+                <arg name="reset_z_axis" value="$(arg vicon_reset_z_axis)"/>
+                <arg name="only_use_object_specific" value="$(arg vicon_only_use_object_specific)"/>
+                <arg name="object_names" value="$(arg vicon_object_names)"/>
+                <arg name="object_msg_types" value="$(arg vicon_object_msg_types)"/>
+                <arg name="object_frame_ids" value="$(arg vicon_object_frame_ids)"/>
+                <arg name="object_publish_topics" value="$(arg vicon_object_publish_topics)"/>
+                <arg name="object_frequency_divider" value="$(arg vicon_object_frequency_divider)"/>
+            </include>
+        </group>
+    </group>
+
+    <!-- Launch TMPC or SMPC and specific parameters -->
+    <group if="$(eval mpc_layer_idx == 0)">
+        <group if="$(eval mpc_interface == 'simplesim')">
+            <group if="$(eval mpc_n_layers == 1)">
+                <node name="mpc_control_node" pkg="mpc_hovergames" type="mpc_control_node" cwd="node" respawn="false" output="screen" args="mpc">
+                    <param name="layer_idx" value="$(arg mpc_layer_idx)"/>
+                    <rosparam command="load" file="$(arg smpc_reconfigure_callback_file)"/>
+                </node>
+                <rosparam command="load" file="$(find mpc_hovergames)/config/simplesim_smpc.yaml"/>
+            </group>
+            <group if="$(eval mpc_n_layers == 2)">
+                <node name="mpc_$(arg mpc_layer_idx)_control_node" pkg="mpc_hovergames" type="mpc_control_node_2_layer" cwd="node" respawn="false" output="screen" args="mpc_$(arg mpc_layer_idx)">
+                    <param name="layer_idx" value="$(arg mpc_layer_idx)"/>
+                    <rosparam command="load" file="$(arg tmpc_reconfigure_callback_file)"/>
+                </node>
+                <rosparam command="load" file="$(find mpc_hovergames)/config/simplesim_hmpc.yaml"/>
+            </group>
+
+            <!-- Launch simple_sim -->
+            <!-- NOTE: for synchronization this has to be launched together with MPC layer 0 -->
+            <include file="$(find simple_sim)/launch/simple_sim.launch">
+                <arg name="model" value="drone_hovergames"/>
+                <arg name="x_init" value="$(arg x_init)"/>
+                <arg name="y_init" value="$(arg y_init)"/>
+                <arg name="z_init" value="$(arg z_takeoff)"/>
+                <arg name="run_event_based" value="true"/>
+                <arg name="model_dt" value="0.05"/>
+                <arg name="steps" value="1"/>
+                <arg name="model_rate" value="20"/>
+                <arg name="add_timing_variance" value="false"/>
+            </include>
+        </group>
+
+        <group if="$(eval mpc_interface == 'px4')">
+            <group if="$(eval mpc_n_layers == 1)">
+                <node name="mpc_control_node" pkg="mpc_hovergames" type="mpc_control_node" cwd="node" respawn="false" output="screen" args="mpc">
+                    <param name="layer_idx" value="$(arg mpc_layer_idx)"/>
+                    <rosparam command="load" file="$(arg smpc_reconfigure_callback_file)"/>
+                </node>
+                <rosparam command="load" file="$(find mpc_hovergames)/config/px4_smpc.yaml"/>
+            </group>
+            <group if="$(eval mpc_n_layers == 2)">
+                <node name="mpc_$(arg mpc_layer_idx)_control_node" pkg="mpc_hovergames" type="mpc_control_node_2_layer" cwd="node" respawn="false" output="screen" args="mpc_$(arg mpc_layer_idx)">
+                    <param name="layer_idx" value="$(arg mpc_layer_idx)"/>
+                    <rosparam command="load" file="$(arg tmpc_reconfigure_callback_file)"/>
+                </node>
+                <rosparam command="load" file="$(find mpc_hovergames)/config/px4_hmpc.yaml"/>
+            </group>
+        </group>
+    </group>
+
+    <!-- Launch PMPC and specific parameters -->
+    <group if="$(eval mpc_layer_idx == 1)">
+        <group if="$(eval mpc_interface == 'simplesim')">
+            <node name="mpc_$(arg mpc_layer_idx)_control_node" pkg="mpc_hovergames" type="mpc_control_node_2_layer" cwd="node" respawn="false" output="screen" args="mpc_$(arg mpc_layer_idx)">
+                <param name="layer_idx" value="$(arg mpc_layer_idx)"/>
+                <rosparam command="load" file="$(arg pmpc_reconfigure_callback_file)"/>
+            </node>
+            <rosparam command="load" file="$(find mpc_hovergames)/config/simplesim_hmpc.yaml"/>
+        </group>
+        <group if="$(eval mpc_interface == 'px4')">
+            <node name="mpc_$(arg mpc_layer_idx)_control_node" pkg="mpc_hovergames" type="mpc_control_node_2_layer" cwd="node" respawn="false" output="screen" args="mpc_$(arg mpc_layer_idx)">
+                <param name="layer_idx" value="$(arg mpc_layer_idx)"/>
+                <rosparam command="load" file="$(arg pmpc_reconfigure_callback_file)"/>
+            </node>
+            <rosparam command="load" file="$(find mpc_hovergames)/config/px4_hmpc.yaml"/>
+        </group>
+    </group>
+
+    <!-- Launch feedback law controller if desired -->
+    <node if="$(arg mpc_use_feedback_law)" name="mpc_$(arg mpc_layer_idx)_feedback_law_control_node" pkg="mpc_hovergames" type="hovergames_feedback_law_node" cwd="node" respawn="false" output="screen" args="mpc_$(arg mpc_layer_idx)_feedback_law">
+        <param name="layer_idx" value="0"/>
+    </node>
+</launch>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mpc_modules</name>
+  <version>0.0.1</version>
+  <description>The mpc_modules package</description>
+
+  <maintainer email="d.benders@tudelft.nl">Dennis Benders</maintainer>
+  <author>Dennis Benders</author>
+  <author>Thijs Niesten</author>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>decomp_util</depend>
+  <depend>eigen</depend>
+  <depend>geometry_msgs</depend>
+  <depend>mpc_tools</depend>
+  <depend>mpc_base</depend>
+  <depend>mpc_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>opencv2</depend>
+  <depend>roscpp</depend>
+
+  <export>
+  </export>
+</package>
