@@ -8,7 +8,7 @@ import numpy as np
 import scipy.io
 
 
-class RmpcOffline:
+class RohmpcOffline:
     def __init__(self) -> None:
         # Load .mat file
         filename = "offline_design.mat"

@@ -19,7 +19,7 @@ model_options["use_growing_tube"] = False
 model_options["use_terminal_steady_state_constraint"] = True
 
 # Read offline-computed quantities and define system constraints and dynamical model
-offline_comp = offline_computations.RmpcOffline()
+offline_comp = offline_computations.RohmpcOffline()
 robot = systems.FalconT(offline_comp=offline_comp)
 model = dynamics.FalconTModel(
     system=robot, options=model_options, offline_comp=offline_comp

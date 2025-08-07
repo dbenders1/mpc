@@ -43,7 +43,7 @@ if model_options["is_robust"] and not (
 # Define model, bounds and offline computations
 robot = systems.Hovergames(model_options["use_input_rates"])
 if model_options["is_robust"]:
-    offline_comp = offline_computations.RmpcOffline()
+    offline_comp = offline_computations.RohmpcOffline()
     model = dynamics.DroneModel(
         system=robot, options=model_options, offline_comp=offline_comp
     )
