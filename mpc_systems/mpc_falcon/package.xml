@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mpc_falcon</name>
+  <version>0.0.1</version>
+  <description>The mpc_falcon package</description>
+
+  <maintainer email="d.benders@tudelft.nl">Dennis Benders</maintainer>
+  <author>Dennis Benders</author>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>eigen</depend>
+  <depend>mpc_msgs</depend>
+  <depend>mpc_tools</depend>
+  <depend>mpc_base</depend>
+  <depend>mpc_core</depend>
+  <depend>mpc_solver</depend>
+  <depend>mpc_modules</depend>
+  <depend>roscpp</depend>
+
+  <export>
+  </export>
+</package>

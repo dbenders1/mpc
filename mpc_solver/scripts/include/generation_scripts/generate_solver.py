@@ -1,4 +1,3 @@
-
 import os
 import shutil
 import sys
@@ -18,13 +17,15 @@ import numpy as np
 def objective_with_stage_index(k, settings):
     return lambda z, p: settings.use_objective(k, z, p, settings)
 
+
 def inequality_constraints_with_stage_index(k, settings):
     return lambda z, p: settings.modules.inequality_constraints(k, z, p, settings)
+
 
 def create_solver(Name, system, dir_path, settings, use_floating, floating_platform):
     print("--- Starting Model creation ---")
 
-    '''
+    """
         Important: Problem formulation
         - In general, we consider an MPC cost function of the following form:
         J_terminal(x(N|t)) + sum_{k=0}^{N-1} J_stage(x(k|t),u(k|t))
@@ -42,8 +43,10 @@ def create_solver(Name, system, dir_path, settings, use_floating, floating_platf
 
         - This means we have to add one additional (terminal) stage at the end to comply with our original formulation
         => N_bar = settings.N + 1 
-    '''
-    settings.N_bar = settings.N + 1  # Note: this relation is assumed in the constraints modules and parameters => updating means checking if they are still correct!
+    """
+    settings.N_bar = (
+        settings.N + 1
+    )  # Note: this relation is assumed in the constraints modules and parameters => updating means checking if they are still correct!
 
     # Print the model and modules
     print(settings.model)
@@ -83,20 +86,23 @@ def create_solver(Name, system, dir_path, settings, use_floating, floating_platf
 
     # Dynamical constraints
     solver.eq = lambda z, p: settings.model.discretize_dynamics(z, p, settings)
-    solver.E = np.concatenate([np.zeros((settings.model.nx, settings.model.nu)), np.eye(settings.model.nx)], axis=1)
+    solver.E = np.concatenate(
+        [np.zeros((settings.model.nx, settings.model.nu)), np.eye(settings.model.nx)],
+        axis=1,
+    )
 
     # What needs to be initialized at runtime
-    if (settings.initialize_input_runtime == False):
+    if settings.initialize_input_runtime == False:
         solver.xinitidx = range(settings.model.nu, settings.model.nvar)
-    elif (settings.initialize_input_runtime == True):
+    elif settings.initialize_input_runtime == True:
         solver.xinitidx = range(settings.model.nvar)
     else:
         print("Error in setting initialized_runtime")
 
     # ==== Solver options ==== #
-    options = forcespro.CodeOptions(Name + 'FORCESNLPsolver')
-    options.printlevel = settings.print_level 
-    options.optlevel = settings.optimization_level  
+    options = forcespro.CodeOptions(Name + "FORCESNLPsolver")
+    options.printlevel = settings.print_level
+    options.optlevel = settings.optimization_level
     options.timing = 1
     options.overwrite = 1
     options.cleanup = 1
@@ -107,28 +113,30 @@ def create_solver(Name, system, dir_path, settings, use_floating, floating_platf
         options.license.use_floating_license = 1
         if floating_platform == 2:
             options.platform = "AARCH-Cortex-A72"
-    
+
     # options.init = 0 # Warm start?
 
     # -- PRIMAL DUAL INTERIOR POINT (Default Solver!) -- #
-    options.maxit = settings.maximum_iterations  
-    options.mu0 = 10^6
-    options.init = 1 
+    options.maxit = settings.maximum_iterations
+    options.mu0 = settings.mu0
+    options.init = 1
     options.linesearch.factor_aff = 0.8
     options.linesearch.factor_cc = 0.85
     options.linesearch.minstep = 1e-7
     options.linesearch.maxstep = 0.95
     options.nlp.integrator.nodes = 4
-    options.nlp.integrator.type = 'ERK4'
-    #options.parallel = 8
+    options.nlp.integrator.type = "ERK4"
+    # options.parallel = 8
 
     print("--- Generating solver ---")
 
     # Define Original path and new path
-    solver_path = dir_path + "/"+ Name + 'FORCESNLPsolver'   
-    print("Path of the solver: {}".format(solver_path))    
-    new_solver_path = dir_path + "/include/mpc_solver/" + system + "/" + Name + 'FORCESNLPsolver'
-    
+    solver_path = dir_path + "/" + Name + "FORCESNLPsolver"
+    print("Path of the solver: {}".format(solver_path))
+    new_solver_path = (
+        dir_path + "/include/mpc_solver/" + system + "/" + Name + "FORCESNLPsolver"
+    )
+
     print("Path of the new solver: {}".format(new_solver_path))
     if os.path.exists(new_solver_path) and os.path.isdir(new_solver_path):
         shutil.rmtree(new_solver_path)
@@ -140,7 +148,7 @@ def create_solver(Name, system, dir_path, settings, use_floating, floating_platf
     if os.path.isdir(solver_path):
         shutil.move(solver_path, new_solver_path)
 
-    #remove forces temp files
+    # remove forces temp files
     for filename in os.listdir(dir_path):
-        if filename.endswith('.forces'):
+        if filename.endswith(".forces"):
             os.remove(os.path.join(dir_path, filename))

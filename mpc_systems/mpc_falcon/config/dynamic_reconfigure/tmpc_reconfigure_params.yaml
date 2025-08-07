@@ -1,0 +1,23 @@
+enable_debug_solver: false
+print_solver_info: true
+print_solver_output: true
+print_solver_parameters: true
+
+R_t0c: 1
+R_t1c: 1
+R_t2c: 1
+R_t3c: 1
+Q_x: 1
+Q_y: 1
+Q_z: 1
+Q_phi: 1
+Q_theta: 1
+Q_psi: 1
+Q_vx: 1
+Q_vy: 1
+Q_vz: 1
+Q_wbx: 1
+Q_wby: 1
+Q_wbz: 1
+slack_linear: 0
+slack_quadratic: 1000

@@ -9,11 +9,15 @@ import tf.transformations as tft
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
 
+
 def get_euclidean_distance(p1, p2):
     if len(p1) == 2:
-        return math.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)
+        return math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)
     else:
-        return math.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)
+        return math.sqrt(
+            (p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2 + (p2[2] - p1[2]) ** 2
+        )
+
 
 class GoalPublisher:
     def __init__(self, exp_type, d_min, d_dim, goals):
@@ -28,11 +32,13 @@ class GoalPublisher:
         print(f"Goals: {self.goals}")
 
         # Initialize ROS publishers and subscribers
-        self.publisher = rospy.Publisher('/goal', PoseStamped, queue_size=10)
-        if exp_type == 'sim':
+        self.publisher = rospy.Publisher("/goal", PoseStamped, queue_size=10)
+        if exp_type == "sim":
             rospy.Subscriber("/drone_hovergames/state", Odometry, self.state_callback)
-        elif exp_type == 'gaz' or exp_type == 'exp':
-            rospy.Subscriber("/mavros/local_position/odom", Odometry, self.state_callback)
+        elif exp_type == "gaz" or exp_type == "exp":
+            rospy.Subscriber(
+                "/mavros/local_position/odom", Odometry, self.state_callback
+            )
 
         # Initialize goal message
         self.goal_msg = PoseStamped()
@@ -63,7 +69,7 @@ class GoalPublisher:
         goal = self.goals[:, self.goal_idx]
 
         # Convert ZYX Euler angles to quaternion for ROS
-        q = tft.quaternion_from_euler(0, 0, goal[3], axes='rzyx')
+        q = tft.quaternion_from_euler(0, 0, goal[3], axes="rzyx")
 
         # Create goal message
         self.goal_msg.header.stamp = rospy.Time.now()
@@ -79,35 +85,75 @@ class GoalPublisher:
         self.publisher.publish(self.goal_msg)
 
         # Print goal confirmation
-        print(f"Goal {self.goal_idx} published: {{x: {goal[0]}, y: {goal[1]}, z: {goal[2]}, psi: {goal[3]}}}")
+        print(
+            f"Goal {self.goal_idx} published: {{x: {goal[0]}, y: {goal[1]}, z: {goal[2]}, psi: {goal[3]}}}"
+        )
 
     def state_callback(self, msg):
-        if self.d_dim == 2 and get_euclidean_distance([msg.pose.pose.position.x, msg.pose.pose.position.y], self.goals[:2, self.goal_idx]) < self.d_min:
+        if (
+            self.d_dim == 2
+            and get_euclidean_distance(
+                [msg.pose.pose.position.x, msg.pose.pose.position.y],
+                self.goals[:2, self.goal_idx],
+            )
+            < self.d_min
+        ):
             print(f"Reached goal {self.goal_idx} within distance {self.d_min} m")
             self.publish_goal()
-        elif self.d_dim == 3 and get_euclidean_distance([msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z], self.goals[:3, self.goal_idx]) < self.d_min:
+        elif (
+            self.d_dim == 3
+            and get_euclidean_distance(
+                [
+                    msg.pose.pose.position.x,
+                    msg.pose.pose.position.y,
+                    msg.pose.pose.position.z,
+                ],
+                self.goals[:3, self.goal_idx],
+            )
+            < self.d_min
+        ):
             print(f"Reached goal {self.goal_idx} within distance {self.d_min} m")
             self.publish_goal()
+
 
 if __name__ == "__main__":
     # Parse input arguments
-    parser = argparse.ArgumentParser(description='Publish a list of goals.')
-    parser.add_argument('--exp_type', type=str, choices=['sim', 'gaz', 'exp'], required=True, help='the experiment type')
-    parser.add_argument('--d_min', type=float, required=True, help='the experiment type')
-    parser.add_argument('--d_dim', default=3, type=int, help='the number of dimensions in which to evaluate the distance metric')
-    parser.add_argument('--goals', metavar='G', type=float, nargs='+', help='a list of goals (x, y, z, yaw)')
+    parser = argparse.ArgumentParser(description="Publish a list of goals.")
+    parser.add_argument(
+        "--exp_type",
+        type=str,
+        choices=["sim", "gaz", "exp"],
+        required=True,
+        help="the experiment type",
+    )
+    parser.add_argument(
+        "--d_min", type=float, required=True, help="the experiment type"
+    )
+    parser.add_argument(
+        "--d_dim",
+        default=3,
+        type=int,
+        help="the number of dimensions in which to evaluate the distance metric",
+    )
+    parser.add_argument(
+        "--goals",
+        metavar="G",
+        type=float,
+        nargs="+",
+        help="a list of goals (x, y, z, yaw)",
+    )
     args = parser.parse_args()
 
     # Pass arguments to goal publisher
     exp_type = args.exp_type
     d_min = args.d_min
     d_dim = args.d_dim
-    goals_list = list(zip(*[iter(args.goals)]*4))
+    goals_list = list(zip(*[iter(args.goals)] * 4))
     goals_list = np.array(goals_list)
     goals_list = goals_list.T
 
     # Initialize ROS node
-    rospy.init_node('goal_publisher')
+    rospy.init_node("goal_publisher")
 
     # Initialize goal publisher
     GoalPublisher(exp_type, d_min, d_dim, goals_list)

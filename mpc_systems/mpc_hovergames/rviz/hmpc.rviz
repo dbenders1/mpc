@@ -158,72 +158,63 @@ Visualization Manager:
           Enabled: true
           Marker Topic: /mpc/vis/current_position
           Name: Current position
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/current_position/ground
           Name: Current position ground
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/current_region
           Name: Current region
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/reference_trajectory/0
           Name: Reference trajectory
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/reference_trajectory/ground/0
           Name: Reference trajectory ground
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/constraints/0
           Name: Obstacle avoidance constraints
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/predicted_positions/0
           Name: Predicted positions
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/predicted_positions/ground/0
           Name: Predicted positions ground
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/predicted_regions/0
           Name: Predicted regions
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -244,48 +235,42 @@ Visualization Manager:
           Enabled: true
           Marker Topic: /mpc/vis/goal_position/1
           Name: Goal position
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/goal_position/ground/1
           Name: Goal position ground
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/constraints/1
           Name: Obstacle avoidance constraints
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/predicted_positions/1
           Name: Predicted positions
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/predicted_positions/ground/1
           Name: Predicted positions ground
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
         - Class: rviz/MarkerArray
           Enabled: true
           Marker Topic: /mpc/vis/predicted_regions/1
           Name: Predicted regions
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
       Enabled: true

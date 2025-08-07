@@ -51,19 +51,24 @@ class Module:
         self.description = ""
 
     def __str__(self):
-        result = self.type.capitalize() + ": " + self.module_name + " - " + self.description
+        result = (
+            self.type.capitalize() + ": " + self.module_name + " - " + self.description
+        )
         return result
 
 
 """ OBJECTIVE MODULES """
-class GoalOrientedModule(Module):
 
+
+class GoalOrientedModule(Module):
     """
     Track position subgoals
     """
 
     def __init__(self, params):
-        self.module_name = "GoalOriented"  # Needs to correspond to the c++ name of the module
+        self.module_name = (
+            "GoalOriented"  # Needs to correspond to the c++ name of the module
+        )
         self.with_params = True
         self.import_name = "modules_objectives/goal_oriented.h"
         self.type = "objective"
@@ -74,13 +79,14 @@ class GoalOrientedModule(Module):
 
 
 class ReferenceTrajectoryModule(Module):
-
     """
     Track a reference defined by states and inputs
     """
 
     def __init__(self, params, model):
-        self.module_name = "ReferenceTrajectory"  # Needs to correspond to the c++ name of the module
+        self.module_name = (
+            "ReferenceTrajectory"  # Needs to correspond to the c++ name of the module
+        )
         self.with_params = True
         self.import_name = "modules_objectives/reference_trajectory.h"
         self.type = "objective"
@@ -90,22 +96,45 @@ class ReferenceTrajectoryModule(Module):
         self.objectives.append(objective.ReferenceTrajectoryObjective(params, model))
 
 
-
 """ CONSTRAINT MODULES """
+
+
 class TightenedSystemConstraints(Module):
     """
     Linear constraints to tighten the system constraints
     """
 
+    def __init__(self, nvar, offline_comp, s_pred, epsilon, use_slack):
+        self.module_name = "TightenedSystemConstraints"  # Needs to correspond to the c++ name of the module
+        self.with_params = False
+        self.import_name = ""
+        self.type = "constraint"
+        self.description = "Tightened system constraints to ensure robustness"
+
+        self.constraints = []
+        self.constraints.append(
+            inequality.TightenedSystemConstraints(
+                nvar, offline_comp, s_pred, epsilon, use_slack
+            )
+        )
+
+
+class TightenedSystemConstraintsOld(Module):
+    """
+    Linear constraints to tighten the system constraints
+    """
+
     def __init__(self, params, nvar, offline_comp):
-        self.module_name = "TightenedSystemConstraints" # Needs to correspond to the c++ name of the module
+        self.module_name = "TightenedSystemConstraintsOld"  # Needs to correspond to the c++ name of the module
         self.with_params = False
         self.import_name = ""
         self.type = "constraint"
         self.description = "Tightened system constraints to ensure robustness. Uses RobustTightening module"
 
         self.constraints = []
-        self.constraints.append(inequality.TightenedSystemConstraints(nvar, offline_comp))
+        self.constraints.append(
+            inequality.TightenedSystemConstraintsOld(nvar, offline_comp)
+        )
 
 
 class TerminalConstraintsSteadyState(Module):
@@ -114,7 +143,7 @@ class TerminalConstraintsSteadyState(Module):
     """
 
     def __init__(self, use_slack):
-        self.module_name = "TerminalConstraintsSteadyState" # Needs to correspond to the c++ name of the module
+        self.module_name = "TerminalConstraintsSteadyState"  # Needs to correspond to the c++ name of the module
         self.with_params = False
         self.import_name = ""
         self.type = "constraint"
@@ -124,24 +153,45 @@ class TerminalConstraintsSteadyState(Module):
         self.constraints.append(inequality.TerminalConstraintsSteadyState(use_slack))
 
 
+class TerminalConstraintsSteadyStateFalcon(Module):
+    """
+    Terminal constraints
+    """
+
+    def __init__(self, use_slack):
+        self.module_name = "TerminalConstraintsSteadyStateFalcon"  # Needs to correspond to the c++ name of the module
+        self.with_params = False
+        self.import_name = ""
+        self.type = "constraint"
+        self.description = (
+            "Terminal constraints to ensure steady state for Falcon quadrotor"
+        )
+
+        self.constraints = []
+        self.constraints.append(
+            inequality.TerminalConstraintsSteadyStateFalcon(use_slack)
+        )
+
+
 class TerminalConstraintsSet(Module):
     """
     Terminal constraints set for position
     """
 
-    def __init__(self, offline_comp, use_slack):
-        self.module_name = "TerminalConstraintsSet" # Needs to correspond to the c++ name of the module
+    def __init__(self, P_delta, s_T, epsilon, alpha, use_slack):
+        self.module_name = "TerminalConstraintsSet"  # Needs to correspond to the c++ name of the module
         self.with_params = False
         self.import_name = ""
         self.type = "constraint"
         self.description = "Terminal constraints set for position"
 
         self.constraints = []
-        self.constraints.append(inequality.TerminalConstraintsSet(offline_comp, use_slack))
+        self.constraints.append(
+            inequality.TerminalConstraintsSet(P_delta, s_T, epsilon, alpha, use_slack)
+        )
 
 
 class StaticPolyhedronConstraintModule(Module):
-
     """
     Linear constraints defining a general polyhedron for static collision avoidance
     """
@@ -154,4 +204,6 @@ class StaticPolyhedronConstraintModule(Module):
         self.description = "Avoid static obstacles using decomp_util"
 
         self.constraints = []
-        self.constraints.append(inequality.LinearConstraints(params, n_discs, 24, use_slack)) # max 24 constraints per stage
+        self.constraints.append(
+            inequality.LinearConstraints(params, n_discs, 24, use_slack)
+        )  # max 24 constraints per stage

@@ -1,25 +1,26 @@
 #ifndef MPC_TOOLS_BENCHMARKER_H
 #define MPC_TOOLS_BENCHMARKER_H
 
-#include <string>
-#include <iostream>
-#include <chrono>
-#include <vector>
 #include <std_msgs/Float64MultiArray.h>
 
+#include <chrono>
+#include <iostream>
+#include <string>
+#include <vector>
 
 namespace Helpers {
 
 // Use as static to print average run time
-class Benchmarker
-{
-public:
-  Benchmarker(const std::string& name, bool record_duration = false, int ignore_first = 10);
+class Benchmarker {
+ public:
+  Benchmarker(const std::string& name, bool record_duration = false,
+              int ignore_first = 10);
 
   // Simpler
   Benchmarker() {}
 
-  void initialize(const std::string& name, bool record_duration = false, int ignore_first = 10);
+  void initialize(const std::string& name, bool record_duration = false,
+                  int ignore_first = 10);
 
   // Print results on destruct
   ~Benchmarker();
@@ -38,7 +39,7 @@ public:
 
   double getLast();
 
-private:
+ private:
   std::chrono::system_clock::time_point start_time_;
 
   double total_duration_ = 0.0;

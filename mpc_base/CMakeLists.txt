@@ -11,28 +11,17 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-find_package(catkin REQUIRED COMPONENTS
-  mpc_msgs
-)
+find_package(catkin REQUIRED COMPONENTS mpc_msgs)
 
 find_package(Eigen3 REQUIRED)
 
-
 add_definitions(${EIGEN_DEFINITIONS})
 
-catkin_package(INCLUDE_DIRS
-  include/
-  ${EIGEN3_INCLUDE_DIRS}
-)
+catkin_package(INCLUDE_DIRS include/ ${EIGEN3_INCLUDE_DIRS})
 
 # Include header files
-include_directories(
-  include/mpc_base
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
-)
+include_directories(include/mpc_base ${catkin_INCLUDE_DIRS}
+                    ${EIGEN3_INCLUDE_DIRS})
 
-install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

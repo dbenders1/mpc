@@ -3,4 +3,4 @@
 
 void errorPrintingSolver(int exit_code);
 
-#endif // MPC_CORE_FUNCTIONS_ERROR_FUNCTION_H
+#endif  // MPC_CORE_FUNCTIONS_ERROR_FUNCTION_H

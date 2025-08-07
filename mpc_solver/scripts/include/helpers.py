@@ -4,6 +4,7 @@ import sys
 import casadi
 import numpy as np
 
+
 def check_forces_path(forces_path):
     # Otherwise is it in a folder forces_path?
     try:
@@ -13,42 +14,52 @@ def check_forces_path(forces_path):
             raise IOError("Forces path not found")
 
         import forcespro.nlp
-        print('Forces found in: {}'.format(forces_path))
+
+        print("Forces found in: {}".format(forces_path))
 
         return True
     except:
         return False
 
+
 def rotation_matrix(angle):
-    return np.array([[casadi.cos(angle), -casadi.sin(angle)],
-                      [casadi.sin(angle), casadi.cos(angle)]])
+    return np.array(
+        [
+            [casadi.cos(angle), -casadi.sin(angle)],
+            [casadi.sin(angle), casadi.cos(angle)],
+        ]
+    )
+
 
 def load_forces_path():
     print_paths = ["PYTHONPATH"]
     # Is forces in the python path?
     try:
         import forcespro.nlp
-        print('Forces found in PYTHONPATH')
+
+        print("Forces found in PYTHONPATH")
 
         return
     except:
         pass
 
-    paths = [os.path.join(os.path.expanduser("~"), "forces_pro_client"),
-             os.path.join(os.getcwd(), "forces"),
-             os.path.join(os.getcwd(), "forces_pro_lib"),
-             os.path.join(os.getcwd(), "../forces"),
-             os.path.join(os.getcwd(), "scripts/forces"),
-             os.path.join(os.getcwd(), "forces/forces_pro_client"),
-             os.path.join(os.getcwd(), "../forces/forces_pro_client")]
+    paths = [
+        os.path.join(os.path.expanduser("~"), "forces_pro_client"),
+        os.path.join(os.getcwd(), "forces"),
+        os.path.join(os.getcwd(), "forces_pro_lib"),
+        os.path.join(os.getcwd(), "../forces"),
+        os.path.join(os.getcwd(), "scripts/forces"),
+        os.path.join(os.getcwd(), "forces/forces_pro_client"),
+        os.path.join(os.getcwd(), "../forces/forces_pro_client"),
+    ]
     for path in paths:
         if check_forces_path(path):
             return
         print_paths.append(path)
 
-    print('Forces could not be imported, paths tried:\n')
+    print("Forces could not be imported, paths tried:\n")
     for path in print_paths:
-        print('{}'.format(path))
+        print("{}".format(path))
     print("\n")
 
 
@@ -68,28 +79,28 @@ class ConstantsStructure:
         constant_dict = dict()
 
         # Fill name
-        constant_dict['name'] = name
+        constant_dict["name"] = name
 
         # Fill start_idx
-        constant_dict['start_idx'] = self.n_values
+        constant_dict["start_idx"] = self.n_values
 
         # Fill ndim
         ndim = constant.ndim
         if ndim > 2:
             exit(f"Constants with three dimensions are not supported.")
-        constant_dict['ndim'] = ndim
+        constant_dict["ndim"] = ndim
 
         # Fill sizes
-        constant_dict['sizes'] = []
+        constant_dict["sizes"] = []
         if ndim == 0:
-            constant_dict['sizes'].append(1)
+            constant_dict["sizes"].append(1)
         else:
             for dim_idx in range(ndim):
-                constant_dict['sizes'].append(constant.shape[dim_idx])
+                constant_dict["sizes"].append(constant.shape[dim_idx])
 
         # Fill values in column-major order (Eigen in C defaults to column-major, so more efficient to save and read)
-        constant_flattened = constant.flatten('F')
-        constant_dict['values'] = constant_flattened
+        constant_flattened = constant.flatten("F")
+        constant_dict["values"] = constant_flattened
         self.n_values += len(constant_flattened)
 
         # Add to constants list
@@ -131,49 +142,85 @@ class ParameterStructure:
         #      'par_weights_names': [param_0_name, ..., param_nw_name],
         #      'par_constraints_names': [param_0_name, ..., param_nc_name],
         self.N = N
-        self.params = [{'n_par': 0, 'n_par_objectives': 0, 'n_par_weights': 0, 'n_par_constraints': 0, 'par_objectives_names': [], 'par_weights_names': [], 'par_constraints_names': []} for _ in range(N + 1)]
+        self.params = [
+            {
+                "n_par": 0,
+                "n_par_objectives": 0,
+                "n_par_weights": 0,
+                "n_par_constraints": 0,
+                "par_objectives_names": [],
+                "par_weights_names": [],
+                "par_constraints_names": [],
+            }
+            for _ in range(N + 1)
+        ]
 
     def add_parameter(self, name, type):
         stages = [stage_idx for stage_idx in range(self.N + 1)]
 
         for stage_idx in stages:
-            self.params[stage_idx]['n_par'] += 1
+            self.params[stage_idx]["n_par"] += 1
             if type == "objectives":
-                self.params[stage_idx]['n_par_objectives'] += 1
-                self.params[stage_idx]['par_objectives_names'].append(name)
+                self.params[stage_idx]["n_par_objectives"] += 1
+                self.params[stage_idx]["par_objectives_names"].append(name)
             elif type == "weights":
-                self.params[stage_idx]['n_par_weights'] += 1
-                self.params[stage_idx]['par_weights_names'].append(name)
+                self.params[stage_idx]["n_par_weights"] += 1
+                self.params[stage_idx]["par_weights_names"].append(name)
             elif type == "constraints":
-                self.params[stage_idx]['n_par_constraints'] += 1
-                self.params[stage_idx]['par_constraints_names'].append(name)
+                self.params[stage_idx]["n_par_constraints"] += 1
+                self.params[stage_idx]["par_constraints_names"].append(name)
 
     def add_multiple_parameters(self, name, amount, type):
         for i in range(amount):
             self.add_parameter(name + "_" + str(i), type)
 
     def get_weight_parameter(self, runtime_params, stage_idx, name):
-        return runtime_params[self.params[stage_idx]['n_par_objectives'] + self.params[stage_idx]['par_weights_names'].index(name)]
+        return runtime_params[
+            self.params[stage_idx]["n_par_objectives"]
+            + self.params[stage_idx]["par_weights_names"].index(name)
+        ]
 
     def get_number_of_parameters(self):
-        return [self.params[stage_idx]['n_par'] for stage_idx in range(self.N + 1)]
-    
+        return [self.params[stage_idx]["n_par"] for stage_idx in range(self.N + 1)]
+
     def get_number_of_objectives_parameters(self):
-        return [self.params[stage_idx]['n_par_objectives'] for stage_idx in range(self.N + 1)]
-    
+        return [
+            self.params[stage_idx]["n_par_objectives"]
+            for stage_idx in range(self.N + 1)
+        ]
+
     def get_number_of_weights_parameters(self):
-        return [self.params[stage_idx]['n_par_weights'] for stage_idx in range(self.N + 1)]
-    
+        return [
+            self.params[stage_idx]["n_par_weights"] for stage_idx in range(self.N + 1)
+        ]
+
     def get_number_of_constraints_parameters(self):
-        return [self.params[stage_idx]['n_par_constraints'] for stage_idx in range(self.N + 1)]
+        return [
+            self.params[stage_idx]["n_par_constraints"]
+            for stage_idx in range(self.N + 1)
+        ]
 
     def load_objectives_params(self, stage_idx, runtime_params):
-        for name in self.params[stage_idx]['par_objectives_names']:
-            setattr(self, name, runtime_params[self.params[stage_idx]['par_objectives_names'].index(name)])
+        for name in self.params[stage_idx]["par_objectives_names"]:
+            setattr(
+                self,
+                name,
+                runtime_params[
+                    self.params[stage_idx]["par_objectives_names"].index(name)
+                ],
+            )
 
     def load_constraints_params(self, stage_idx, runtime_params):
-        for name in self.params[stage_idx]['par_constraints_names']:
-            setattr(self, name, runtime_params[self.params[stage_idx]['n_par_objectives'] + self.params[stage_idx]['n_par_weights'] + self.params[stage_idx]['par_constraints_names'].index(name)])
+        for name in self.params[stage_idx]["par_constraints_names"]:
+            setattr(
+                self,
+                name,
+                runtime_params[
+                    self.params[stage_idx]["n_par_objectives"]
+                    + self.params[stage_idx]["n_par_weights"]
+                    + self.params[stage_idx]["par_constraints_names"].index(name)
+                ],
+            )
 
     def __str__(self):
         result = f"NOTE:\nThe parameters dictionary below contains equal amount of parameters for all stages to be able to use the same indices for each of the parameters.\nHowever, the constraints are applied to specific stages, so some constraints parameters might not be used in all stages.\nCheck settings.py for the specification of stages to which the (different) constraints apply!\n"

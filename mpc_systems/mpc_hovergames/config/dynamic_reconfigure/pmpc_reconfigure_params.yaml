@@ -19,7 +19,6 @@ goal_yaw_all: 20
 thrust: 20
 slack_linear: 0
 slack_quadratic: 1000
-
 # Simplesim (N_total=12, N=9, beta=4)
 # input_delta_angles: 3.56
 # input_delta_psi: 3.56

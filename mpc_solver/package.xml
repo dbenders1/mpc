@@ -11,7 +11,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>eigen</depend>
-  <depend>mpc_base</depend>
+  <depend>mpc_base
+  </depend>
 
   <export>
   </export>

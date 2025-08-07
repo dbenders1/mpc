@@ -67,7 +67,6 @@ goal_yaw_all: 10
 thrust: 10
 slack_linear: 0
 slack_quadratic: 1000
-
 # Drone dt=0.05 N=8 - no terminal steady state
 # input_delta_angles: 20
 # input_delta_psi: 20

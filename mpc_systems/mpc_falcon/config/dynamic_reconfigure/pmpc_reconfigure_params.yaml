@@ -1,0 +1,15 @@
+enable_debug_solver: false
+print_solver_info: true
+print_solver_output: true
+print_solver_parameters: true
+print_states: false
+
+tc: 10
+goal_xy_all: 20
+goal_z_all: 20
+goal_yaw_all: 20
+goal_xy: 100
+goal_z: 100
+goal_yaw: 100
+slack_linear: 0
+slack_quadratic: 1000

@@ -231,8 +231,7 @@ Visualization Manager:
           Enabled: true
           Marker Topic: /mpc/vis/predicted_regions
           Name: Predicted regions
-          Namespaces:
-            {}
+          Namespaces: {}
           Queue Size: 100
           Value: true
       Enabled: true

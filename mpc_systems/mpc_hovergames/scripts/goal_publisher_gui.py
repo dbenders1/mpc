@@ -5,10 +5,11 @@ import tf.transformations as tft
 
 from geometry_msgs.msg import PoseStamped
 
+
 class GoalPublisherGUI:
     def __init__(self):
         # Initialize ROS publisher and goal message
-        self.publisher = rospy.Publisher('/goal', PoseStamped, queue_size=10)
+        self.publisher = rospy.Publisher("/goal", PoseStamped, queue_size=10)
         self.goal_msg = PoseStamped()
         self.goal_msg.header.frame_id = "map"
         self.goal_msg.pose.position.x = 0
@@ -29,7 +30,14 @@ class GoalPublisherGUI:
                 dpg.add_text("y: ")
                 self.y_input = dpg.add_input_double(default_value=-1, width=100)
                 dpg.add_text("z: ")
-                self.z_input = dpg.add_input_double(default_value=1.6, min_value=1, max_value=2, min_clamped=True, max_clamped=True, width=100)
+                self.z_input = dpg.add_input_double(
+                    default_value=1.6,
+                    min_value=1,
+                    max_value=2,
+                    min_clamped=True,
+                    max_clamped=True,
+                    width=100,
+                )
                 dpg.add_text("phi: ")
                 self.phi_input = dpg.add_input_double(default_value=0, width=100)
                 dpg.add_text("theta: ")
@@ -40,7 +48,7 @@ class GoalPublisherGUI:
             dpg.add_separator()
             dpg.add_button(label="Close", callback=self.close)
 
-        dpg.create_viewport(title='Goal Publisher', width=1100, height=150)
+        dpg.create_viewport(title="Goal Publisher", width=1100, height=150)
         dpg.setup_dearpygui()
         dpg.show_viewport()
         dpg.start_dearpygui()
@@ -56,7 +64,7 @@ class GoalPublisherGUI:
         psi = dpg.get_value(self.psi_input)
 
         # Convert ZYX Euler angles to quaternion for ROS
-        q = tft.quaternion_from_euler(psi, theta, phi, axes='rzyx')
+        q = tft.quaternion_from_euler(psi, theta, phi, axes="rzyx")
 
         # Create goal message
         self.goal_msg.header.stamp = rospy.Time.now()
@@ -72,11 +80,14 @@ class GoalPublisherGUI:
         self.publisher.publish(self.goal_msg)
 
         # Print goal confirmation
-        print(f"Goal published: {{x: {x}, y: {y}, z: {z}, phi: {phi}, theta: {theta}, psi: {psi}}}")
+        print(
+            f"Goal published: {{x: {x}, y: {y}, z: {z}, phi: {phi}, theta: {theta}, psi: {psi}}}"
+        )
 
     def close(self, sender, data):
         dpg.stop_dearpygui()
 
+
 if __name__ == "__main__":
-    rospy.init_node('goal_publisher', anonymous=True)
+    rospy.init_node("goal_publisher", anonymous=True)
     gui = GoalPublisherGUI()

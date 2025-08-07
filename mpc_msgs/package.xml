@@ -8,7 +8,7 @@
   <author>Dennis Benders</author>
   <author>Thijs Niesten</author>
   <license>MIT</license>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
   <depend>geometry_msgs</depend>
   <depend>std_msgs</depend>

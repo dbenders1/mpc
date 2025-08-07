@@ -1,6 +1,6 @@
 enable_debug_solver: false
-print_solver_info: true 
-print_solver_output: true 
+print_solver_info: true
+print_solver_output: true
 print_solver_parameters: true
 
 # Simplesim/Gazebo/drone
