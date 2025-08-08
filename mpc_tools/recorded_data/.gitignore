@@ -6,3 +6,6 @@
 !2025-08-08_09-39__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
 !2025-08-08_09-45__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
 !2025-08-08_09-48__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
+
+# Do not ignore the pre-generated json files to analyze the ROHMPC framework
+!2025-08-08_11-47__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
