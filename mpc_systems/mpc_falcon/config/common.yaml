@@ -56,14 +56,14 @@ params:
       goal_oriented:
         draw_goal_position_ground_air: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
         marker_color: [0, 1, 0, 1]
-        marker_scale: [0.25, 0.25, 0.04]
+        marker_scale: [0.125, 0.125, 0.04]
       reference_trajectory:
         draw_reference_trajectory_ground_air: 3 # 0: draw nothing, 1: draw ground projection only, 2: draw in air only, >=3: draw both on ground and in air
         marker_color: [1, 0, 0, 1]
-        marker_scale: [0.15, 0.15, 0.12]
+        marker_scale: [0.075, 0.075, 0.12]
       static_polyhedron_constraints:
         marker_alpha_hierarchical: 0.1
-        marker_scale: [0.1, 0.1, 0.001]
+        marker_scale: [0.05, 0.05, 0.001]
         draw_vertices: true
   recording:
     enable_ros_recordings: true
