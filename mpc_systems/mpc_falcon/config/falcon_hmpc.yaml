@@ -29,7 +29,7 @@ params:
         draw_constraints/1: true
         marker_z/0: 0.004
         marker_z/1: 0.002
-        indices_to_draw/0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        indices_to_draw/0: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         indices_to_draw/1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   recording:
     system_interface:
