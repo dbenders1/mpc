@@ -1,0 +1,8 @@
+*.json
+
+# Do not ignore the pre-generated json files to calibrate rho_c, w_bar_c, and epsilon
+!2025-08-08_08-36__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
+!2025-08-08_09-31__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
+!2025-08-08_09-39__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
+!2025-08-08_09-45__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
+!2025-08-08_09-48__ReferenceTrajectory_StaticPolyhedronConstraints_0.json
